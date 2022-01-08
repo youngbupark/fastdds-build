@@ -19,7 +19,7 @@ jobs:
       - name: Sync fastdds-build repo
         uses: actions/checkout@v2
         with:
-          path: fastdds-build
+          path: src/fastdds-build
 
       - name: Install apt packages
         uses: ./src/fastdds-build/.github/actions/install-apt-packages

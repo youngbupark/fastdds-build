@@ -1,0 +1,45 @@
+name: fast-dds-linux
+
+on:
+  workflow_dispatch:
+  pull_request:
+  push:
+    branches:
+      - main
+  schedule:
+    - cron: '0 0 * * *'
+
+jobs:
+  ubuntu-build:
+    runs-on: ubuntu-latest
+    environment:
+      name: codecov
+
+    steps:
+      - name: Sync fastdds-build repo
+        uses: actions/checkout@v2
+        with:
+          path: fastdds-build
+
+      - name: Install apt packages
+        uses: ./src/fastdds-build/.github/actions/install-apt-packages
+
+      - name: Install GTest
+        uses: ./src/fastdds-build/.github/actions/install-gtest-linux
+
+      - name: Install Python packages
+        uses: ./src/fastdds-build/.github/actions/install-python-packages
+
+      - name: Fetch Fast DDS repositories
+        uses: ./src/fastdds-build/.github/actions/fetch-fastdds-repos
+
+      - name: Update colcon mixin
+        run: |
+          colcon mixin add default \
+            https://raw.githubusercontent.com/colcon/colcon-mixin-repository/master/index.yaml
+          colcon mixin update default
+        continue-on-error: true
+
+      - name: Build workspace
+        run: |
+          colcon build

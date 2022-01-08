@@ -1,0 +1,88 @@
+name: fast-dds-windows
+
+on:
+  workflow_dispatch:
+  pull_request:
+  push:
+    branches:
+      - main
+  schedule:
+    - cron: '0 0 * * *'
+
+jobs:
+
+  windows-build-test-release:
+    runs-on: windows-latest
+    env:
+      CXXFLAGS: /MP
+      OPENSSL64_ROOT: "C:/Program Files/OpenSSL-Win64"
+
+    steps:
+      - name: Sync fastdds-build repo
+        uses: actions/checkout@v2
+        with:
+          path: fastdds-build
+
+      - name: Install OpenSSL
+        uses: ./fastdds-build/.github/actions/install-openssl-windows
+
+      - name: Install GTest
+        uses: ./fastdds-build/.github/actions/install-gtest-windows
+
+      - name: Install yaml-cpp
+        uses: ./fastdds-build/.github/actions/install-yamlcpp-windows
+
+      - name: Install foonatham memory
+        uses: ./fastdds-build/.github/actions/install-foonathan-memory-windows
+        with:
+          cmake_build_type: "Release"
+
+      - name: Install Fast CDR
+        uses: ./fastdds-build/.github/actions/install-fastcdr-windows
+        with:
+          cmake_build_type: "Release"
+
+      - name: Install Fast DDS
+        uses: ./fastdds-build/.github/actions/install-fastdds-windows
+        with:
+          cmake_build_type: "Release"
+
+  windows-build-test-debug:
+    runs-on: windows-latest
+    env:
+      CXXFLAGS: /MP
+      OPENSSL64_ROOT: "C:/Program Files/OpenSSL-Win64"
+
+    steps:
+      - name: Sync fastdds-build repo
+        uses: actions/checkout@v2
+        with:
+          path: fastdds-build
+
+      - name: Install OpenSSL
+        uses: ./fastdds-build/.github/actions/install-openssl-windows
+
+      - name: Install GTest
+        uses: ./fastdds-build/.github/actions/install-gtest-windows
+        with:
+          cmake_build_type: "Debug"
+
+      - name: Install yaml-cpp
+        uses: ./fastdds-build/.github/actions/install-yamlcpp-windows
+        with:
+          cmake_build_type: "Debug"
+
+      - name: Install foonatham memory
+        uses: ./fastdds-build/.github/actions/install-foonathan-memory-windows
+        with:
+          cmake_build_type: "Debug"
+
+      - name: Install Fast CDR
+        uses: ./fastdds-build/.github/actions/install-fastcdr-windows
+        with:
+          cmake_build_type: "Debug"
+
+      - name: Install Fast DDS
+        uses: ./fastdds-build/.github/actions/install-fastdds-windows
+        with:
+          cmake_build_type: "Debug"

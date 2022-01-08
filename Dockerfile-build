@@ -1,0 +1,24 @@
+FROM ubuntu:21.10
+
+WORKDIR /src
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update && apt-get -y install jq
+
+RUN apt-get -q -y install wget cmake g++ python3-pip wget git libasio-dev libtinyxml2-dev libssl-dev \
+    libp11-dev libengine-pkcs11-openssl
+
+RUN apt-get -q -y install softhsm2 
+
+RUN p11-kit list-modules
+
+RUN openssl engine pkcs11 -t
+
+RUN pip3 install -U colcon-common-extensions vcstool
+
+RUN mkdir Fast-DDS && cd Fast-DDS \
+    && wget https://raw.githubusercontent.com/eProsima/Fast-DDS/master/fastrtps.repos \
+    && mkdir src && vcs import src < fastrtps.repos
+
+RUN colcon build
